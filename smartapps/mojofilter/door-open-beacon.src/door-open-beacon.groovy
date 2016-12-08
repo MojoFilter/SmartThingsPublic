@@ -78,22 +78,22 @@ def subscribe() {
 
 def motionActiveHandler(evt) {
 	log.debug "motion $evt.value"
-	flashLights()
+	onFlashTick()
 }
 
 def contactOpenHandler(evt) {
 	log.debug "contact $evt.value"
-	flashLights()
+	onFlashTick()
 }
 
 def accelerationActiveHandler(evt) {
 	log.debug "acceleration $evt.value"
-	flashLights()
+	onFlashTick()
 }
 
 def switchOnHandler(evt) {
 	log.debug "switch $evt.value"
-	flashLights()
+	onFlashTick()
 }
 
 def presenceHandler(evt) {
