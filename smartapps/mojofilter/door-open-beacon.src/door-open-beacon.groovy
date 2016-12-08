@@ -40,6 +40,9 @@ preferences {
 		input "onFor", "number", title: "On for (default 1000)", required: false
 		input "offFor", "number", title: "Off for (default 1000)", required: false
 	}
+	section("Repeating every...") {
+		input "period", "number", title: "Seconds (default 10)", required: false
+	}
 }
 
 def installed() {
@@ -99,6 +102,14 @@ def presenceHandler(evt) {
 		flashLights()
 	} else if (evt.value == "not present") {
 		flashLights()
+	}
+}
+
+private onFlashTick() {
+	def period = period ?: 10
+	if (switches.FindAll { "open" == currentContact}) {
+		flashLights()
+		runIn(period, onFlashTick)
 	}
 }
 
