@@ -35,6 +35,10 @@ preferences {
 		input "delayMinutes", "number", title: "Minutes?"
 	}
 
+	section("And use this switch to enable it") {
+		input "masterSwitch", "capability.switch", required: true
+	}
+
 	section ("Sunrise offset (optional)...") {
 		input "sunriseOffsetValue", "text", title: "HH:MM", required: false
 		input "sunriseOffsetDir", "enum", title: "Before or After", required: false, options: ["Before","After"]
@@ -60,15 +64,10 @@ def updated() {
 
 def initialize() {
 	subscribe(motionSensor, "motion", motionHandler)
-	//if (lightSensor) {
-	//	subscribe(lightSensor, "illuminance", illuminanceHandler, [filterEvents: false])
-	//}
-	//else {
-		subscribe(location, "position", locationPositionChange)
-		subscribe(location, "sunriseTime", sunriseSunsetTimeHandler)
-		subscribe(location, "sunsetTime", sunriseSunsetTimeHandler)
-		astroCheck()
-	//}
+	subscribe(location, "position", locationPositionChange)
+	subscribe(location, "sunriseTime", sunriseSunsetTimeHandler)
+	subscribe(location, "sunsetTime", sunriseSunsetTimeHandler)
+	astroCheck()
 }
 
 def locationPositionChange(evt) {
@@ -106,7 +105,7 @@ def motionHandler(evt) {
 
 def turnOffMotionAfterDelay() {
 	log.trace "In turnOffMotionAfterDelay, state.motionStopTime = $state.motionStopTime, state.lastStatus = $state.lastStatus"
-	if (state.motionStopTime && state.lastStatus != "off") {
+	if (masterSwitchIsOn && state.motionStopTime && state.lastStatus != "off") {
 		def elapsed = now() - state.motionStopTime
         log.trace "elapsed = $elapsed"
 		if (elapsed >= ((delayMinutes ?: 0) * 60000L) - 2000) {
@@ -130,11 +129,20 @@ def astroCheck() {
 }
 
 private enabled() {
-	boolean dark
+	masterSwitchIsOn && isDark && allLightsAreOff
+}
+
+private masterSwitchIsOn() {
+	masterSwitch.currentSwitch == "on"
+}
+
+private isDark() {
     def t = now()
-	dark = t < state.riseTime || t > state.setTime
-    def allOff = !lights.findAll {"on" == it.currentSwitch}    
-    dark && allOff
+	t < state.riseTime || t > state.setTime
+}
+
+private allLightsAreOff() {
+	!lights.findAll {"on" == it.currentSwitch}
 }
 
 private getSunriseOffset() {
