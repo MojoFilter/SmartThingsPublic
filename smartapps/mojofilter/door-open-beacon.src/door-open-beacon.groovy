@@ -25,8 +25,14 @@ definition(
 
 
 preferences {
-	section("Title") {
-		// TODO: put inputs here
+	section("When these doors are open...") {
+		input "doors", "capability.doorControl", multiple: true
+	}
+	section("Flash these lights...") {
+		input "switches", "capability.switch", multiple: true 
+	}
+	section("This often") {
+		input "period", "number", "Delay (Seconds)"
 	}
 }
 
@@ -44,7 +50,7 @@ def updated() {
 }
 
 def initialize() {
-	// TODO: subscribe to attributes, devices, locations, etc.
+	subscribe(doors, "door.open")
 }
 
 // TODO: implement event handlers
