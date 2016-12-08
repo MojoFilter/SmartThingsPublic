@@ -34,7 +34,9 @@ preferences {
 	section("And then off when it's light or there's been no movement for..."){
 		input "delayMinutes", "number", title: "Minutes?"
 	}
-
+	section("Setting the lights to this level:") {
+		input "dimLevel", "number", title: "Brightness %?", required: true, defaultValue: 10, range: "1..100"
+	}
 	section("And use this switch to enable it") {
 		input "masterSwitch", "capability.switch", required: true
 	}
@@ -87,7 +89,7 @@ def motionHandler(evt) {
 		if (enabled()) {
 			log.debug "turning on lights due to motion"
             lights.findAll { it.hasCommand("setColor") }.each { it.setColor(hue: 98, saturation: 89) }
-			lights.setLevel(15)
+			lights.setLevel(dimLevel)
 			state.lastStatus = "on"
 		}
 		state.motionStopTime = null
@@ -105,7 +107,7 @@ def motionHandler(evt) {
 
 def turnOffMotionAfterDelay() {
 	log.trace "In turnOffMotionAfterDelay, state.motionStopTime = $state.motionStopTime, state.lastStatus = $state.lastStatus"
-	if (masterSwitchIsOn && state.motionStopTime && state.lastStatus != "off") {
+	if (!allLightsAtDimLevel && state.motionStopTime && state.lastStatus != "off") {
 		def elapsed = now() - state.motionStopTime
         log.trace "elapsed = $elapsed"
 		if (elapsed >= ((delayMinutes ?: 0) * 60000L) - 2000) {
@@ -143,6 +145,10 @@ private isDark() {
 
 private allLightsAreOff() {
 	!lights.findAll {"on" == it.currentSwitch}
+}
+
+private allLightsAtDimLevel() {
+	!lights.any { it.currentLevel != dimLevel }
 }
 
 private getSunriseOffset() {
