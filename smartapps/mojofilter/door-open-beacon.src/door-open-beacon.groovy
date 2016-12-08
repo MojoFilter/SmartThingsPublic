@@ -107,9 +107,10 @@ def presenceHandler(evt) {
 
 private onFlashTick() {
 	def period = period ?: 10
-	if (switches.FindAll { "open" == currentContact}) {
+    contact.each { log.debug "Contact: ${it.currentContact}"}
+	if (contact.findAll { "open" == it.currentContact}) {
 		flashLights()
-		runIn(period, onFlashTick)
+		runIn(period, "onFlashTick")
 	}
 }
 
