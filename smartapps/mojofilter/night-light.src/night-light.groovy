@@ -107,7 +107,7 @@ def motionHandler(evt) {
 
 def turnOffMotionAfterDelay() {
 	log.trace "In turnOffMotionAfterDelay, state.motionStopTime = $state.motionStopTime, state.lastStatus = $state.lastStatus"
-	if (!allLightsAtDimLevel && state.motionStopTime && state.lastStatus != "off") {
+	if (!allLightsAtDimLevel() && state.motionStopTime && state.lastStatus != "off") {
 		def elapsed = now() - state.motionStopTime
         log.trace "elapsed = $elapsed"
 		if (elapsed >= ((delayMinutes ?: 0) * 60000L) - 2000) {
@@ -131,7 +131,8 @@ def astroCheck() {
 }
 
 private enabled() {
-	masterSwitchIsOn && isDark && allLightsAreOff
+    log.debug "switch: ${masterSwitchIsOn()} / dark: ${isDark()} / lights off: ${allLightsAreOff()}"
+	masterSwitchIsOn() && isDark() && allLightsAreOff()
 }
 
 private masterSwitchIsOn() {
