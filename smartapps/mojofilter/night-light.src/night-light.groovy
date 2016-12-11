@@ -106,8 +106,9 @@ def motionHandler(evt) {
 
 
 def turnOffMotionAfterDelay() {
-	log.trace "In turnOffMotionAfterDelay, state.motionStopTime = $state.motionStopTime, state.lastStatus = $state.lastStatus"
-	if (!allLightsAtDimLevel() && state.motionStopTime && state.lastStatus != "off") {
+	def allLightsDimmed = allLightsAtDimLevel()
+	log.trace "In turnOffMotionAfterDelay, allLightsDimmed = ${allLightsDimmed}, state.motionStopTime = $state.motionStopTime, state.lastStatus = $state.lastStatus"
+	if (allLightsDimmed && state.motionStopTime && state.lastStatus != "off") {
 		def elapsed = now() - state.motionStopTime
         log.trace "elapsed = $elapsed"
 		if (elapsed >= ((delayMinutes ?: 0) * 60000L) - 2000) {
