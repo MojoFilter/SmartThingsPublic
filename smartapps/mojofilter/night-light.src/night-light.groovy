@@ -41,6 +41,10 @@ preferences {
 		input "masterSwitch", "capability.switch", required: true
 	}
 
+    section("Sunrise/Sunset trigger") {
+		input "useAstro", "bool", title: "Enabled?"
+	}
+	
 	section ("Sunrise offset (optional)...") {
 		input "sunriseOffsetValue", "text", title: "HH:MM", required: false
 		input "sunriseOffsetDir", "enum", title: "Before or After", required: false, options: ["Before","After"]
