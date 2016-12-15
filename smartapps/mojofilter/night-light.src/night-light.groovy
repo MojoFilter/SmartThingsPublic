@@ -44,7 +44,7 @@ preferences {
     section("Sunrise/Sunset trigger") {
 		input "useAstro", "bool", title: "Enabled?"
 	}
-	
+
 	section ("Sunrise offset (optional)...") {
 		input "sunriseOffsetValue", "text", title: "HH:MM", required: false
 		input "sunriseOffsetDir", "enum", title: "Before or After", required: false, options: ["Before","After"]
@@ -92,7 +92,7 @@ def motionHandler(evt) {
 	if (evt.value == "active") {
 		if (enabled()) {
 			log.debug "turning on lights due to motion"
-            lights.findAll { it.hasCommand("setColor") }.each { it.setColor(hue: 98, saturation: 89) }
+            //lights.findAll { it.hasCommand("setColor") }.each { it.setColor(hue: 98, saturation: 89) }
 			lights.setLevel(dimLevel)
 			state.lastStatus = "on"
 		}
@@ -146,7 +146,8 @@ private masterSwitchIsOn() {
 
 private isDark() {
     def t = now()
-	t < state.riseTime || t > state.setTime
+	log.debug "useAstro: ${useAstro}"
+	!useAstro || t < state.riseTime || t > state.setTime
 }
 
 private allLightsAreOff() {
