@@ -32,7 +32,6 @@ def updated() {
 
 def initialize() {
     subscribe(lights, "switch.on", lightOnHandler)	
-	astroCheck()
 }
 
 def lightOnHandler(evt) {
