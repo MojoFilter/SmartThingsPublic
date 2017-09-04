@@ -25,8 +25,11 @@ definition(
 
 
 preferences {
-	section("Title") {
-		// TODO: put inputs here
+	section("Choose hue lights you wish to control...") {
+            input "hues", "capability.colorControl", title: "Which Color Changing Bulbs?", multiple:true, required: true
+	}
+	section("How long is the tea timer?"){
+		input "timerLengthMinutes", "number", title: "Minutes?"
 	}
 }
 
@@ -44,7 +47,20 @@ def updated() {
 }
 
 def initialize() {
-	// TODO: subscribe to attributes, devices, locations, etc.
+	hue = 33
+	saturation = 100
+	brightness = 100
+	timerLength = timerLengthMinutes * 60 * 1000
+	updateRate = 2 //seconds
+	startTime = now()
+
 }
 
-// TODO: implement event handlers
+def updateLight() {
+    def passedTime = now() - startTime
+	def currentBrightness = passedTime / timerLength
+	hues.setColor([hue: hue, saturation: saturation, level: brightness])
+	if ((timerLength - passedTime) > (updateRate * 1000)) {
+		runIn(updateRate, updateLight)
+	}
+}
