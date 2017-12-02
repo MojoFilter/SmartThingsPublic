@@ -69,17 +69,19 @@ def triggerSwitchOnHandler(evt) {
 
 
 def startTimer() {
+	hue = 33 
+    saturation = 100 
 	timerLength = timerLengthMinutes * 60 * 1000
 	updateRate = 2 //seconds
 	startTime = now()
-	updateLight()
+	updateLight(startTime, timerLength, updateRate, hue, saturation)
 }
 
-def updateLight() {
+def updateLight(startTime, timerLength, updateRate, hue, saturation) {
     def passedTime = now() - startTime
 	def currentBrightness = (passedTime / timerLength) * 100
-	lights.setColor([hue: hue, saturation: saturation, level: brightness])
+	lights.setColor([hue: hue, saturation: saturation, level: currentBrightness])
 	if ((timerLength - passedTime) > (updateRate * 1000)) {
-		runIn(updateRate, updateLight)
+		runIn(updateRate, () -> updateLight(startTime, timerLength, updateRate, hue, saturation))
 	}
 }
