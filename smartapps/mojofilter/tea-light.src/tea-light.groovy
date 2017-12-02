@@ -31,19 +31,36 @@ preferences {
 	section("How long is the tea timer?"){
 		input "timerLengthMinutes", "number", title: "Minutes?", defaultValue: 4
 	}
+	section("Trigger on which switch?") {
+		input "triggerSwitch", "capability.switch", title: "Switch?", required: true
+	}
 }
 
 def installed() {
 	log.debug "Installed with settings: ${settings}"
 
-	initialize()
+	subscribe()
 }
 
 def updated() {
 	log.debug "Updated with settings: ${settings}"
 
 	unsubscribe()
-	initialize()
+	subscribe()
+}
+
+def subscribe() {
+	subscribe(triggerSwitch, "switch.on", triggerSwitchOnHandler)
+}
+
+def unsubscribe() {
+
+}
+
+def switchOnHandler(evt) {
+	log.debug "switch $evt.value"
+	startTimer()
+	triggerSwitch.off()
 }
 
 hue = 33
@@ -52,7 +69,7 @@ timerLength = timerLengthMinutes * 60 * 1000
 updateRate = 2 //seconds
 startTime = now()
 
-def initialize() {
+def startTimer() {
 	timerLength = timerLengthMinutes * 60 * 1000
 	updateRate = 2 //seconds
 	startTime = now()
