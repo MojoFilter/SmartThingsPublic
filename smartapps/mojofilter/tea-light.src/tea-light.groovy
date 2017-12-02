@@ -61,7 +61,7 @@ def unsubscribe() {
 
 }
 
-def switchOnHandler(evt) {
+def triggerSwitchOnHandler(evt) {
 	log.debug "switch $evt.value"
 	startTimer()
 	triggerSwitch.off()
