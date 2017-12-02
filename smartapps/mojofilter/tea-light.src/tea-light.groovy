@@ -25,13 +25,17 @@ definition(
 
 
 preferences {
+
 	section("Choose hue lights you wish to control...") {
-            input "hues", "capability.colorControl", title: "Which Color Changing Bulbs?", multiple:true, required: true
+            input "lights", "capability.colorControl", title: "Which Color Changing Bulbs?", multiple: true
 	}
+    
 	section("How long is the tea timer?"){
-		input "timerLengthMinutes", "number", title: "Minutes?", defaultValue: 4
+		input "timerLengthMinutes", "number", title: "Minutes?", defaultValue: 4, required: true
 	}
-	section("Trigger on which switch?") {
+	
+    
+    section("Trigger on which switch?") {
 		input "triggerSwitch", "capability.switch", title: "Switch?", required: true
 	}
 }
@@ -63,11 +67,6 @@ def switchOnHandler(evt) {
 	triggerSwitch.off()
 }
 
-hue = 33
-saturation = 100
-timerLength = timerLengthMinutes * 60 * 1000
-updateRate = 2 //seconds
-startTime = now()
 
 def startTimer() {
 	timerLength = timerLengthMinutes * 60 * 1000
@@ -79,7 +78,7 @@ def startTimer() {
 def updateLight() {
     def passedTime = now() - startTime
 	def currentBrightness = (passedTime / timerLength) * 100
-	hues.setColor([hue: hue, saturation: saturation, level: brightness])
+	lights.setColor([hue: hue, saturation: saturation, level: brightness])
 	if ((timerLength - passedTime) > (updateRate * 1000)) {
 		runIn(updateRate, updateLight)
 	}
