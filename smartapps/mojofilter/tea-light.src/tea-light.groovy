@@ -55,6 +55,7 @@ def updated() {
 
 def subscribe() {
 	subscribe(triggerSwitch, "switch.on", triggerSwitchOnHandler)
+    log.debug "Should be subscribed"
 }
 
 def unsubscribe() {
@@ -63,8 +64,9 @@ def unsubscribe() {
 
 def triggerSwitchOnHandler(evt) {
 	log.debug "switch $evt.value"
-	startTimer()
 	triggerSwitch.off()
+    log.debug "and now it should be off"
+	startTimer()
 }
 
 
@@ -74,14 +76,17 @@ def startTimer() {
 	state.timerLength = timerLengthMinutes * 60 * 1000
 	state.updateRate = 2 //seconds
 	state.startTime = now()
-	updateLight())
+    lights.setColor([hue: state.hue, saturation: state.saturation, level: 100])
+	lights.on()
+	updateLight()
 }
 
 def updateLight() {
     def passedTime = now() - state.startTime
-	def currentBrightness = (passedTime / state.timerLength) * 100
-	lights.setColor([hue: state.hue, saturation: state.saturation, level: currentBrightness])
-	if ((state.timerLength - passedTime) > (state.updateRate * 1000)) {
-		runIn(updateRate, updateLight)
+	def currentBrightness = 100 - (passedTime / state.timerLength) * 100 
+    log.debug "Timer lights at $currentBrightness ($passedTime / $state.timerLength)"
+	lights.
+    if ((state.timerLength - passedTime) > (state.updateRate * 1000)) {
+		runIn(state.updateRate, updateLight)
 	}
 }
