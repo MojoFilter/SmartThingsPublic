@@ -85,7 +85,7 @@ def updateLight() {
     def passedTime = now() - state.startTime
 	def currentBrightness = 100 - (passedTime / state.timerLength) * 100 
     log.debug "Timer lights at $currentBrightness ($passedTime / $state.timerLength)"
-	lights.
+	lights.setLevel(currentBrightness)
     if ((state.timerLength - passedTime) > (state.updateRate * 1000)) {
 		runIn(state.updateRate, updateLight)
 	}
