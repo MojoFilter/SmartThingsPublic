@@ -71,10 +71,10 @@ def triggerSwitchOnHandler(evt) {
 
 
 def startTimer() {
-	state.hue = 33 
+	state.hue = 114
     state.saturation = 100 
 	state.timerLength = timerLengthMinutes * 60 * 1000
-	state.updateRate = 2 //seconds
+	state.updateRate = 2000 //miliseconds
 	state.startTime = now()
     lights.setColor([hue: state.hue, saturation: state.saturation, level: 100])
 	lights.on()
