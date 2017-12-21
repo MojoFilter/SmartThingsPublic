@@ -74,7 +74,7 @@ def startTimer() {
 	state.hue = 114
     state.saturation = 100 
 	state.timerLength = timerLengthMinutes * 60 * 1000
-	state.updateRate = 2000 //miliseconds
+	state.updateRate = 2 //seconds
 	state.startTime = now()
     lights.setColor([hue: state.hue, saturation: state.saturation, level: 100])
 	lights.on()
@@ -88,6 +88,7 @@ def updateLight() {
 	def oneCycleMs =  (state.updateRate * 1000)
     log.debug "Timer lights at $currentBrightness ($passedTime / $state.timerLength)"
 	log.debug "Time Left: $timeLeft"
+    log.debug "Update rate (seconds): $state.updateRate"
 	log.debug "Cycle length: $oneCycleMs"
 	lights.setLevel(currentBrightness)
     if (timeLeft > oneCycleMs) {
