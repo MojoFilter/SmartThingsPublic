@@ -71,14 +71,19 @@ def triggerSwitchOnHandler(evt) {
 
 
 def startTimer() {
-	state.hue = 114
+	state.hue = 33
     state.saturation = 100 
 	state.timerLength = timerLengthMinutes * 60 * 1000
 	state.updateRate = 2 //seconds
 	state.startTime = now()
-    lights.setColor([hue: state.hue, saturation: state.saturation, level: 100])
+	lights.setColor([hue: state.hue, saturation: state.saturation, level: 100])
 	lights.on()
 	updateLight()
+}
+
+def endTimer() {
+	lights.off()
+	lights.setColor([hue: 0, saturation: 0, level: 100])
 }
 
 def updateLight() {
@@ -88,7 +93,6 @@ def updateLight() {
 	def oneCycleMs =  (state.updateRate * 1000)
     log.debug "Timer lights at $currentBrightness ($passedTime / $state.timerLength)"
 	log.debug "Time Left: $timeLeft"
-    log.debug "Update rate (seconds): $state.updateRate"
 	log.debug "Cycle length: $oneCycleMs"
 	lights.setLevel(currentBrightness)
     if (timeLeft > oneCycleMs) {
@@ -96,4 +100,25 @@ def updateLight() {
 	} else {
 		lights.off()
 	}
+}
+
+def captureStates() {
+	def states = [:]
+	for (theDevice in lights) {
+		def deviceState = captureState(theDevice)
+		def deviceID = theDevice.id
+		states[deviceID] = deviceState
+	}
+	return states
+}
+
+def captureState(theDevice) {
+	def deviceAttributes = theDevice.supportedAttributes
+	def deviceAttrValue = [:]
+	for ( attr in theDevice.supportedAttributes ) {
+		def attrName = "${attr}"
+		def attrValue = theDevice.currentValue(attrName)
+		deviceAttrValue[attrName] = attrValue
+	}
+	return deviceAttrValue
 }
