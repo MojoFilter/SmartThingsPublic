@@ -82,8 +82,8 @@ def startTimer() {
 }
 
 def endTimer() {
-	lights.off()
 	lights.setColor([hue: 0, saturation: 0, level: 100])
+	lights.off()
 }
 
 def updateLight() {
