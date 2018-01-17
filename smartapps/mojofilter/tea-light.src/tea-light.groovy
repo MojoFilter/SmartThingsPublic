@@ -82,8 +82,8 @@ def startTimer() {
 }
 
 def endTimer() {
-	lights.setColor([hue: 0, saturation: 0, level: 100])
-	lights.off()
+	// orange. why not?
+	lights.setColor([hue: 10, saturation: 100, level: 100])
 }
 
 def updateLight() {
@@ -98,7 +98,7 @@ def updateLight() {
     if (timeLeft > oneCycleMs) {
 		runIn(state.updateRate, updateLight)
 	} else {
-		lights.off()
+		endTimer()
 	}
 }
 
