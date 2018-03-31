@@ -25,8 +25,11 @@ definition(
 
 
 preferences {
-	section("Title") {
-		// TODO: put inputs here
+	section("When a door closes...") {
+		input "contact", "capability.contactSensor", title: "Door?", required: false
+	}
+	section("Turn off...") {
+		input "switches", "capability.switch", title: "These lights", multiple: true
 	}
 }
 
@@ -44,7 +47,18 @@ def updated() {
 }
 
 def initialize() {
-	// TODO: subscribe to attributes, devices, locations, etc.
+	subscribe()
+}
+
+def subscribe() {
+	if (contact) {
+		subscribe(contact, "contact.close", contactCloseHandler)
+	}
+}
+
+def contactCloseHandler(evt) {
+	log.debug "contact $evt.value"
+	switches.off()
 }
 
 // TODO: implement event handlers
